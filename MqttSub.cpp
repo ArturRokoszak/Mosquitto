@@ -59,7 +59,7 @@ public:
          std::stringstream ss;
          ss << "Received msg: size:" <<  msg->payloadlen << " Latency: " << timeDiff << " Counter:" << values.size();
          std::cout << ss.str() << std::endl;
-         Logger::Log(ss, "Current time:", currentTime, "Sending time:", timeStamp);
+         Logger::Log(ss.str(), "Current time:", currentTime, "Sending time:", timeStamp);
       }
       else if(topic == endTestTopic)
       {
