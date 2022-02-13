@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <numeric>
 #include <iterator>
+#include <sstream>
 
 namespace
 {
@@ -29,7 +30,7 @@ public:
       mosq.SetListener(this);
       mosq.Connect(host);
       mosq.Subscribe(testTopic);
-      mosq.Subscribe(endTestTopic);
+      mosq.Subscribe(endTestTopic, 1);
    }
 
    void StartTest()
@@ -39,7 +40,7 @@ public:
 
    void OnConnect(int res) override
    {
-      std::cout << "Connection callback, result" << res << std::endl;
+      std::cout << "Connected to broker, result:" << res << std::endl;
       Logger::Log("Connection result:", res);
    }
 
@@ -48,19 +49,27 @@ public:
       using namespace std::chrono;
       auto currentTime = duration_cast<microseconds>(system_clock::now().time_since_epoch()).count();
       std::string topic = msg->topic;
+
       if(topic == testTopic)
       {
          uint64_t timeStamp = *((uint64_t*)msg->payload);
          auto timeDiff = currentTime - timeStamp;
-         std::cout << "Received msg. Latency : " << timeDiff << std::endl;
          values.push_back(timeDiff);
+
+         std::stringstream ss;
+         ss << "Received msg: size:" <<  msg->payloadlen << " Latency: " << timeDiff << " Counter:" << values.size();
+         std::cout << ss.str() << std::endl;
+         Logger::Log(ss, "Current time:", currentTime, "Sending time:", timeStamp);
       }
       else if(topic == endTestTopic)
       {
          auto min = std::min_element(values.begin(), values.end());
          auto max = std::max_element(values.begin(), values.end());
          auto avg = std::accumulate(values.begin(), values.end(), 0)/values.size();
+
+         std::cout << "Test finished:" << std::endl;
          std::cout << "Min:" << *min << " Max:" << *max << " Avg:" << avg << std::endl;
+
          mosq.Disconnect();
       }
    }
