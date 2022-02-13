@@ -69,19 +69,19 @@ int MosquittoCpp::Disconnect()
    return mosquitto_disconnect(mosq);
 }
 
-int MosquittoCpp::Publish(const std::string& topic, const std::vector<uint8_t>& msg)
+int MosquittoCpp::Publish(const std::string& topic, const std::vector<uint8_t>& msg, int qos)
 {
-   return mosquitto_publish(mosq, nullptr, topic.c_str(), msg.size(), (const void*)msg.data(), 0, false);
+   return mosquitto_publish(mosq, nullptr, topic.c_str(), msg.size(), (const void*)msg.data(), qos, false);
 }
 
-int MosquittoCpp::Publish(const std::string& topic)
+int MosquittoCpp::Publish(const std::string& topic, int qos)
 {
-   return mosquitto_publish(mosq, nullptr, topic.c_str(), 0, nullptr, 0, false);
+   return mosquitto_publish(mosq, nullptr, topic.c_str(), 0, nullptr, qos, false);
 }
 
-int MosquittoCpp::Subscribe(const std::string& topic)
+int MosquittoCpp::Subscribe(const std::string& topic, int qos)
 {
-   return mosquitto_subscribe(mosq, nullptr, topic.c_str(), 0);
+   return mosquitto_subscribe(mosq, nullptr, topic.c_str(), qos);
 }
 
 int MosquittoCpp::LoopStart()

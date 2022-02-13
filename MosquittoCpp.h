@@ -22,9 +22,9 @@ public:
 
    int Connect(const std::string&, int port = 1883);
    int Disconnect();
-	int Publish(const std::string&, const std::vector<uint8_t>&);
-   int Publish(const std::string&);
-	int Subscribe(const std::string&);
+	int Publish(const std::string&, const std::vector<uint8_t>&, int qos = 0);
+   int Publish(const std::string&, int qos = 0);
+	int Subscribe(const std::string&, int qos = 0);
    int LoopStart();
    int LoopStartForever();
 
